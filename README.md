@@ -126,7 +126,6 @@ weighted avg 0.9854 0.9850 0.9852 200
 
 ### 1. Clone the repository
 
-```bash
 git clone <repository-url>
 cd payment_fraud_detection
 
@@ -138,7 +137,7 @@ Copy
 Edit
 pip install -r requirements.txt
 3. Place the dataset
-Ensure expanded_fraud_detection_dataset.csv is placed in the root directory.'''bash 
+Ensure expanded_fraud_detection_dataset.csv is placed in the root directory.
 
 ### Dependencies
 The following Python libraries are required:
