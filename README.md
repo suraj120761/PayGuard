@@ -1,7 +1,6 @@
 # PayGuard
 Payment_fraud_detection
-# PayGuard
-Payment_fraud_detection
+
 # Payment Fraud Detection using Machine Learning
 This project develops a machine learning model to detect fraudulent B2B cross-border payment transactions. The solution leverages feature engineering based on common fraud patterns and evaluates multiple classification models to identify the most effective one, with a focus on explainability using SHAP.
 
