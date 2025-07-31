@@ -139,3 +139,24 @@ Edit
 pip install -r requirements.txt
 3. Place the dataset
 Ensure expanded_fraud_detection_dataset.csv is placed in the root directory.
+
+ Dependencies
+The following Python libraries are required:
+
+pandas
+
+numpy
+
+scikit-learn
+
+xgboost
+
+lightgbm
+
+seaborn
+
+matplotlib
+
+shap
+
+joblib
