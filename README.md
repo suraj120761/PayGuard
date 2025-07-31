@@ -1,132 +1,141 @@
 # PayGuard
-Payment_fraud_detection
 
-# Payment Fraud Detection using Machine Learning
+**Payment Fraud Detection using Machine Learning**
+
 This project develops a machine learning model to detect fraudulent B2B cross-border payment transactions. The solution leverages feature engineering based on common fraud patterns and evaluates multiple classification models to identify the most effective one, with a focus on explainability using SHAP.
 
-Table of Contents
-Project Overview
+---
 
-Key Features
+## Table of Contents
 
-Methodology
+- [Project Overview](#project-overview)  
+- [Key Features](#key-features)  
+- [Methodology](#methodology)  
+- [Model Evaluation and Results](#model-evaluation-and-results)  
+- [Model Explainability with SHAP](#model-explainability-with-shap)  
+- [How to Run](#how-to-run)  
+- [Dependencies](#dependencies)  
 
-Model Evaluation and Results
+---
 
-Model Explainability with SHAP
+## Project Overview
 
-How to Run
+The primary goal of this project is to build a reliable system for identifying fraudulent payment transactions in a B2B cross-border context.
 
-Dependencies
+The model is trained on a **synthetic dataset** that mimics real-world fraud scenarios, including:
 
-Project Overview
-The primary goal of this project is to build a reliable system for identifying fraudulent payment transactions in a B2B cross-border context. The model is trained on a synthetic dataset that mimics real-world scenarios, including patterns associated with Business Email Compromise (BEC), Fake Supplier Fraud, and Money Muling. The final output is a tuned XGBoost model that excels at identifying fraudulent transactions while minimizing false positives. The project also emphasizes model interpretability, using SHAP to explain the factors driving its predictions.
+- Business Email Compromise (BEC)
+- Fake Supplier Fraud
+- Money Muling
 
-Key Features
-Data Preprocessing: Cleans and prepares raw transaction data for analysis.
+The final output is a **tuned XGBoost model** that excels at identifying fraudulent transactions while minimizing false positives. The project also emphasizes **model interpretability** using SHAP.
 
-Advanced Feature Engineering: Creates intelligent features that capture behavioral patterns indicative of fraud, such as:
+---
 
-is_new_beneficiary: Identifies payments to new, unfamiliar accounts.
+## Key Features
 
-beneficiary_bank_changed: Detects when a known supplier's bank details are suddenly altered.
+- **Data Preprocessing:** Cleans and prepares raw transaction data.
+  
+- **Advanced Feature Engineering:**  
+  Creates intelligent features capturing behavioral fraud patterns such as:
+  
+  - `is_new_beneficiary`: Payments to new/unfamiliar accounts.
+  - `beneficiary_bank_changed`: Change in known supplier’s bank details.
+  - `transaction_velocity_24h`: High-frequency payments to the same account.
+  - `amount_deviation_from_avg`: Large deviation in payment amounts per customer.
 
-transaction_velocity_24h: Flags high-frequency payments to a single beneficiary.
+- **Model Comparison:**  
+  Evaluates the following models:
+  - Logistic Regression (baseline)
+  - Random Forest
+  - LightGBM
+  - XGBoost (chosen final model)
 
-amount_deviation_from_avg: Spots payments that are unusually large for a specific customer.
+- **Hyperparameter Tuning:**  
+  Uses `GridSearchCV` to optimize the **XGBoost model** for best F1-score.
 
-Model Comparison: Trains and evaluates four different classification algorithms to find the best fit for the problem:
+- **Model Explainability:**  
+  Uses **SHAP** (SHapley Additive exPlanations) to understand what drives the model’s predictions globally and locally.
 
-Logistic Regression (as a baseline)
+---
 
-Random Forest
+##Methodology
 
-LightGBM
+The project follows a structured machine learning workflow, as implemented in `Fraud_detection (3).ipynb`:
 
-XGBoost
+1. **Data Loading and Cleaning**  
+   - Loads dataset `expanded_fraud_detection_dataset.csv`
+   - Renames columns and combines date/time into `TransactionTime`
 
-Hyperparameter Tuning: Optimizes the best-performing model (XGBoost) using GridSearchCV to maximize its F1-score.
+2. **Feature Engineering**  
+   - Incorporates domain-driven features based on fraud signals
 
-Model Explainability: Utilizes SHAP (SHapley Additive exPlanations) to understand and visualize the key drivers behind the model's decisions.
+3. **Model Training and Selection**  
+   - Trains four models
+   - Handles class imbalance with `scale_pos_weight` or `class_weight`
 
-Methodology
-The project follows a structured machine learning workflow as detailed in the Jupyter Notebook:
+4. **Evaluation Metrics**  
+   - Compares models based on Precision, Recall, F1-score
+   - Selects **XGBoost** as the champion model
 
-Data Loading and Cleaning: The dataset (expanded_fraud_detection_dataset.csv) is loaded, columns are renamed for clarity, and a proper TransactionTime column is created from date and time components.
+5. **Hyperparameter Tuning**  
+   - Fine-tunes XGBoost using GridSearchCV  
+   - Business acceptance criteria:
+     - Recall ≥ **90%**
+     - False Positive Rate < **5%**
 
-Feature Engineering: New features are created based on business rules and common fraud typologies to enhance the model's predictive power.
+6. **Model Interpretability**  
+   - Uses **SHAP** to provide visual explanations of predictions
 
-Model Training and Selection: Four models are trained on the engineered features. The dataset's class imbalance is handled using techniques like scale_pos_weight (for XGBoost/LightGBM) and class_weight (for Random Forest/Logistic Regression).
+---
 
-Evaluation: Models are evaluated based on their Recall (Fraud Detection Rate) and Precision. XGBoost was selected as the champion model due to its superior balance of these metrics, resulting in the highest F1-score.
+## Model Evaluation and Results
 
-Tuning and Validation: The XGBoost model's hyperparameters are tuned to find the optimal settings. The final model is then validated against predefined acceptance criteria: a recall of >= 90% and a false positive rate of < 5%.
+### Tuned XGBoost Performance on Test Data:
+          precision    recall  f1-score   support
 
-Explainability Analysis: SHAP is applied to the tuned XGBoost model to generate both global and local explanations for its predictions.
+       0     0.9944    0.9889    0.9916       180
+       1     0.9048    0.9500    0.9268        20
 
-Model Evaluation and Results
-After a comparative analysis and hyperparameter tuning, XGBoost was identified as the best model for this fraud detection task. It successfully met the business-critical acceptance criteria.
+accuracy                         0.9850       200
 
-Tuned XGBoost Performance on Test Data:
+macro avg 0.9496 0.9694 0.9592 200
+weighted avg 0.9854 0.9850 0.9852 200
 
---- XGBoost Evaluation Report ---
-              precision    recall  f1-score   support
 
-           0     0.9944    0.9889    0.9916       180
-           1     0.9048    0.9500    0.9268        20
+- **Fraud Detection Rate (Recall):** 95.00%  
+- **False Positive Rate:** 1.11%  
+- **Optimal Threshold:** 0.7 (selected using Precision-Recall curve)
 
-    accuracy                         0.9850       200
-   macro avg     0.9496    0.9694    0.9592       200
-weighted avg     0.9854    0.9850    0.9852       200
-Fraud Detection Rate (Recall): 95.00% (Successfully identified 19 out of 20 fraud cases)
+---
 
-False Positive Rate: 1.11% (Very low rate of incorrectly flagging legitimate transactions)
+## Model Explainability with SHAP
 
-The model's performance was further analyzed using a precision-recall curve to select an optimal decision threshold, which was set at 0.7 to maintain high recall while improving precision.
+- **SHAP Summary Plot:**  
+  Highlights most impactful features:
+  - `amount_deviation_from_avg`
+  - `transaction_velocity_24h`
+  - `Amount`
 
-Model Explainability with SHAP
-To ensure the model is not a "black box," SHAP was used to interpret its predictions.
+- **SHAP Force Plot:**  
+  Shows local explanations for individual predictions and highlights feature contributions in fraud decisions.
 
-SHAP Summary Plot: This plot provides a global view of feature importance. It confirmed that amount_deviation_from_avg, transaction_velocity_24h, and Amount were the most significant predictors of fraud.
+---
 
-SHAP Force Plot: This plot explains individual predictions. The analysis for a single fraudulent transaction demonstrated exactly which features contributed to the high fraud score, providing clear, actionable insights.
+##  How to Run
 
-How to Run
-Clone the repository:
+### 1. Clone the repository
 
-Bash
-
+```bash
 git clone <repository-url>
 cd payment_fraud_detection
-Install dependencies:
-It is recommended to create a virtual environment. Install the required libraries from requirements.txt.
 
-Bash
+2. Install dependencies
+ Recommended: Use a virtual environment.
 
+bash
+Copy
+Edit
 pip install -r requirements.txt
-Place the dataset:
-Ensure the dataset file expanded_fraud_detection_dataset.csv is in the root directory of the project.
-
-Run the notebook:
-Open and run the Fraud_detection (3).ipynb Jupyter Notebook to see the full analysis, from data loading to model evaluation and explanation.
-
-Dependencies
-The project relies on the following Python libraries:
-
-pandas
-
-numpy
-
-scikit-learn
-
-xgboost
-
-lightgbm
-
-seaborn
-
-matplotlib
-
-shap
-
-joblib
+3. Place the dataset
+Ensure expanded_fraud_detection_dataset.csv is placed in the root directory.
